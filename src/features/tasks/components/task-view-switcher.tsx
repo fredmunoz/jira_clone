@@ -13,6 +13,7 @@ import { useGetTasks } from '../api/use-get-tasks';
 
 import { useCreateTaskModal } from '../hooks/use-create-task-modal';
 import { useTaskFilters } from '../hooks/use-task-filters';
+import { useProjectId } from '@/features/projects/hooks/use-project-id';
 
 import { DataFilters } from './data-filters';
 import { DataTable } from './data-table';
@@ -23,19 +24,28 @@ import { DataKanban } from './data-kanban';
 import { TaskStatus } from '../types';
 import { useBulkUpdateTasks } from '../api/use-bulk-update-tasks';
 
-export const TaskViewSwitcher = () => {
+interface TaskViewSwitcherProps {
+  hideProjectFilter?: boolean;
+}
+
+export const TaskViewSwitcher = ({
+  hideProjectFilter,
+}: TaskViewSwitcherProps) => {
   const [{ status, assigneeId, projectId, dueDate }] = useTaskFilters();
+  console.log({ status, assigneeId, projectId, dueDate });
+
   const [view, setView] = useQueryState('task-view', {
     defaultValue: 'table',
   });
 
   const workspaceId = useWorkspaceId();
+  const paramProjectId = useProjectId();
 
   const { open } = useCreateTaskModal();
   const { mutate: bulkUpdate } = useBulkUpdateTasks();
   const { data: tasks, isLoading: isLoadingTasks } = useGetTasks({
     workspaceId,
-    projectId,
+    projectId: paramProjectId || projectId,
     assigneeId,
     status,
     dueDate,
@@ -76,7 +86,7 @@ export const TaskViewSwitcher = () => {
           </Button>
         </div>
         <DottedSeparator className="my-4" />
-        <DataFilters />
+        <DataFilters hideProjectFilter={hideProjectFilter} />
         <DottedSeparator className="my-4" />
         {isLoadingTasks ? (
           <div className="w-full border rounded-lg h-[200px] flex flex-col items-center justify-center">
