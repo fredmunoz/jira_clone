@@ -21,7 +21,8 @@ const app = new Hono()
     const { account } = await createAdminClient();
     const session = await account.createEmailPasswordSession(email, password);
 
-    setCookie(c, AUTH_COOKIE, session.secret, {
+    const { secret } = session;
+    setCookie(c, AUTH_COOKIE, secret!, {
       path: '/',
       httpOnly: true,
       secure: true,
