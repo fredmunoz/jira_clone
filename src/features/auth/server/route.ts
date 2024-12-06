@@ -25,7 +25,7 @@ const app = new Hono()
       path: '/',
       httpOnly: true,
       secure: true,
-      sameSite: 'strict',
+      sameSite: 'Lax',
       maxAge: 60 * 60 * 24 * 30,
     });
 
